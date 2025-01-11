@@ -1,0 +1,1 @@
+使用目标lua执行 `./lua check_opcode.lua`
