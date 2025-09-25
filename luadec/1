@@ -1,0 +1,196 @@
+1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111-- Decompiled using luadec 2.2 rev: fd1b70d for Lua 5.1 from https://github.com/viruscamp/luadec
+-- Command line: ../../dispatcher.lua 
+
+-- params : ...
+-- function num : 0
+local l_0_0 = require("nixio.fs")
+local l_0_1 = require("luci.sys")
+local l_0_2 = require("luci.util")
+local l_0_3 = require("luci.http")
+local l_0_4 = require("luci.forbidden")
+local l_0_5 = require("nixio")
+require("nixio.util")
+module("luci.dispatcher", package.seeall)
+context = (l_0_2.threadlocal)()
+uci = require("luci.model.uci")
+i18n = require("luci.i18n")
+-- DECOMPILER ERROR at PC38: Confused about usage of register: R6 in 'UnsetPending'
+
+_M.fs = l_0_0
+local l_0_6, l_0_7 = nil, nil
+build_url = function(...)
+  -- function num : 0_0 , upvalues : l_0_3
+  local l_1_1 = {...}
+  local l_1_2 = {(l_0_3.getenv)("SCRIPT_NAME") or ""}
+  for l_1_6,l_1_7 in ipairs(l_1_1) do
+    local l_1_3 = nil
+    -- DECOMPILER ERROR at PC17: Confused about usage of register: R8 in 'UnsetPending'
+
+    local l_1_15 = R8_PC17:match
+    l_1_15 = l_1_15(R8_PC17, "^[a-zA-Z0-9_%-%.%%/,;]+$")
+    if l_1_15 then
+      local l_1_11, l_1_12 = nil
+      l_1_15 = #l_1_2
+      l_1_15 = l_1_15 + Unknown_Type_Error
+      l_1_2[l_1_15] = "/"
+      l_1_15 = #l_1_2
+      l_1_15 = l_1_15 + Unknown_Type_Error
+      local l_1_13 = nil
+      l_1_2[l_1_15] = l_1_14
+    end
+  end
+  if #l_1_1 == Unknown_Type_Error then
+    l_1_2[#l_1_2 + Unknown_Type_Error] = "/"
+  end
+  local l_1_8 = nil
+  local l_1_9 = table.concat
+  local l_1_10 = l_1_2
+  do return l_1_9(l_1_10, "") end
+  -- DECOMPILER ERROR at PC42: Confused about usage of register R5 for local variables in 'ReleaseLocals'
+
+end
+
+node_visible = function(l_2_0)
+  -- function num : 0_1
+  if l_2_0 then
+    -- DECOMPILER ERROR at PC34: Unhandled construct in 'MakeBoolean' P1
+
+    if l_2_0.title and #l_2_0.title ~= Unknown_Type_Error and l_2_0.target and l_2_0.hidden ~= true and type(l_2_0.target) == "table" and (l_2_0.target).type == "firstchild" then
+      do
+        if type(l_2_0.nodes) == "table" then
+          local l_2_1 = not not next(l_2_0.nodes)
+        else
+        end
+        do return false end
+        do return false end
+        -- DECOMPILER ERROR: 3 unprocessed JMP targets
+      end
+    end
+  end
+end
+
+node_childs = function(l_3_0)
+  -- function num : 0_2 , upvalues : l_0_2
+  local l_3_1 = {}
+  if l_3_0 then
+    local l_3_2, l_3_3 = nil, nil
+    for l_3_7,l_3_8 in (l_0_2.spairs)(l_3_0.nodes, function(l_4_0, l_4_1)
+    -- function num : 0_2_0 , upvalues : l_3_0
+    do return ((l_3_0.nodes)[l_4_0]).order or Unknown_Type_Error < ((l_3_0.nodes)[l_4_1]).order or Unknown_Type_Error end
+    -- DECOMPILER ERROR: 1 unprocessed JMP targets
+  end
+) do
+      if node_visible(l_3_8) then
+        l_3_1[#l_3_1 + Unknown_Type_Error] = l_3_7
+      end
+    end
+  end
+  do
+    return l_3_1
+  end
+end
+
+error404 = function(l_4_0)
+  -- function num : 0_3 , upvalues : l_0_3, l_0_2
+  (l_0_3.status)(Unknown_Type_Error, "Not Found")
+  if not l_4_0 then
+    l_4_0 = "Not Found"
+  end
+  require("luci.template")
+  if not (l_0_2.copcall)((luci.template).render, "error404") then
+    (l_0_3.prepare_content)("text/plain")
+    ;
+    (l_0_3.write)(l_4_0)
+  end
+  return false
+end
+
+error500 = function(l_5_0)
+  -- function num : 0_4 , upvalues : l_0_2, l_0_3
+  (l_0_2.perror)(l_5_0)
+  if not context.template_header_sent then
+    (l_0_3.status)(Unknown_Type_Error, "Internal Server Error")
+    ;
+    (l_0_3.prepare_content)("text/plain")
+    ;
+    (l_0_3.write)(l_5_0)
+  else
+    require("luci.template")
+    local l_5_1 = l_0_2.copcall
+    local l_5_2 = (luci.template).render
+    local l_5_3 = "error500"
+    local l_5_4 = {}
+    l_5_4.message = l_5_0
+    l_5_1 = l_5_1(l_5_2, l_5_3, l_5_4)
+    if not l_5_1 then
+      l_5_1 = l_0_3
+      l_5_1 = l_5_1.prepare_content
+      l_5_2 = "text/plain"
+      l_5_1(l_5_2)
+      l_5_1 = l_0_3
+      l_5_1 = l_5_1.write
+      l_5_2 = l_5_0
+      l_5_1(l_5_2)
+    end
+  end
+  do
+    return false
+  end
+end
+
+httpdispatch = function(l_6_0, l_6_1)
+  -- function num : 0_5 , upvalues : l_0_3, l_0_2
+  -- DECOMPILER ERROR at PC2: Confused about usage of register: R2 in 'UnsetPending'
+
+  (l_0_3.context).request = l_6_0
+  local l_6_2 = {}
+  -- DECOMPILER ERROR at PC5: Confused about usage of register: R3 in 'UnsetPending'
+
+  context.request = l_6_2
+  local l_6_3 = (l_0_3.urldecode)(l_6_0:getenv("PATH_INFO") or "", true)
+  if l_6_1 then
+    for l_6_7,l_6_8 in ipairs(l_6_1) do
+      l_6_2[#l_6_2 + Unknown_Type_Error] = l_6_8
+    end
+  end
+  do
+    for l_6_12 in l_6_3:gmatch("[^/]+") do
+      l_6_2[#l_6_2 + Unknown_Type_Error] = l_6_12
+    end
+    local l_6_13, l_6_14 = (l_0_2.coxpcall)(function()
+    -- function num : 0_5_0
+    dispatch(context.request)
+  end
+, error500)
+    ;
+    (l_0_3.close)()
+  end
+end
+
+do
+  local l_0_18 = function(l_7_0)
+  -- function num : 0_6 , upvalues : l_0_3
+  if type(l_7_0) == "table" then
+    do
+      if type(l_7_0.post) == "table" then
+        local l_7_1, l_7_2, l_7_3 = nil, nil, nil
+        for l_7_7,l_7_8 in pairs(l_7_0.post) do
+          l_7_3 = (l_0_3.formvalue)(l_7_7)
+          if (type(l_7_8) == "string" and l_7_3 ~= l_7_8) or l_7_8 == true and (l_7_3 == nil or l_7_3 == "") then
+            return false
+          end
+        end
+        return true
+      end
+      do return l_7_0.post == true end
+      do return false end
+      -- DECOMPILER ERROR: 2 unprocessed JMP targets
+    end
+  end
+end
+
+  -- DECOMPILER ERROR at PC173: freeLocal<0 in 'ReleaseLocals'
+
+  -- WARNING: undefined locals caused missing assignments!
+end
+

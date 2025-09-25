@@ -78,7 +78,8 @@ static lua_Number LoadNumber(LoadState *S)
 
 static TString *LoadString(LoadState *S)
 {
-   size_t size;
+   // size_t size;
+   unsigned int size;
    LoadVar(S, size);
    if (size == 0)
       return NULL;
@@ -99,6 +100,13 @@ static void LoadCode(LoadState *S, Proto *f)
 }
 
 static Proto *LoadFunction(LoadState *S, TString *p);
+
+static lua_Integer LoadInteger(LoadState *S)
+{
+   lua_Integer x;
+   LoadVar(S, x);
+   return x;
+}
 
 static void LoadConstants(LoadState *S, Proto *f)
 {
@@ -125,6 +133,9 @@ static void LoadConstants(LoadState *S, Proto *f)
          break;
       case LUA_TSTRING:
          setsvalue2n(S->L, o, LoadString(S));
+         break;
+      case LUA_TINT: /* Integer type saved in bytecode (see lcode.c) */
+         setivalue(o, LoadInteger(S));
          break;
       default:
          error(S, "bad constant");
@@ -187,7 +198,6 @@ static Proto *LoadFunction(LoadState *S, TString *p)
    LoadCode(S, f);
    LoadConstants(S, f);
    LoadDebug(S, f);
-   printf("11111111111111");
    IF(!luaG_checkcode(f), "bad code");
    S->L->top--;
    S->L->nCcalls--;

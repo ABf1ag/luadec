@@ -14,7 +14,7 @@ CP= cp -f
 RM= rm -f
 
 CC= gcc
-CFLAGS= -O2 -Wall -DSRCVERSION=\"$(SRCVERSION)\" $(INCS) $(MYCFLAGS)
+CFLAGS= -g -O2 -Wall -DSRCVERSION=\"$(SRCVERSION)\" $(INCS) $(MYCFLAGS)
 LDFLAGS= $(MYLDFLAGS)
 AR= ar rcu
 RANLIB= ranlib
